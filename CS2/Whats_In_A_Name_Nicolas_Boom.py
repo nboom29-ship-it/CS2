@@ -5,10 +5,11 @@ Bugs: None known
 Date: 9/29/2026
 Bonuses: Consonant frequency with subtotals for each consonant, return fullname as sorted array of characters, build a menu, return boolean if name contains a title/distinction, and my own function: the search_factors function
 Log: Initial version: 9/10/2026
-    9/18/2026 Updated to include reverse, find_vowels, find_consonants, get_firstname, get_lastname, make_uppercase, make_lowercase
-    9/29/2026 Reverse, Find_vowels, Find_consonants, Firstname, Lastname, Middlename, Find_hyphen_in_lastname, Make_lowercase, Make_uppercase, Scramble, Find_palindrome_in_first_name, Make_array,
+    9/18/2026 9:05: Updated to include reverse, find_vowels, find_consonants, get_firstname, get_lastname, make_uppercase, make_lowercase
+    9/29/2026 8:50: Reverse, Find_vowels, Find_consonants, Firstname, Lastname, Middlename, Find_hyphen_in_lastname, Make_lowercase, Make_uppercase, Scramble, Find_palindrome_in_first_name, Make_array,
                 Get_initials, Find_title, and Find_factors functions were included and updated
-    9/29/2026 Added documentation to all functions, as well as supplementary documentation using hashtags to specific lines
+    9/29/2026 8:49: Added documentation to all functions, as well as supplementary documentation using hashtags to specific lines. Changed name of file from What_Is_In_A_Name.py to Whats_In_A_Name_Nicolas_Boom
+    10/1/2026 10:55: Fixed bugs in firstname and lastname functions
 
 """
 
@@ -133,11 +134,13 @@ def get_firstname(name):
     """
     
     while True:
-        if number_char_in_word(name, " ") == 1:
-            break
-        else:
+        if number_char_in_word(name, " ") > 1 or name[0] == " " or name[-1] == " ":
             print(f"It seems '{name}' doesn't only have your first and last name in it. Please try again. ")
             name = input("What is your name? Enter your first and last name. ")
+            
+        else:
+            break
+            
 
     first_name = name.split(' ')[0]
 
@@ -157,11 +160,13 @@ def get_lastname(name):
 
     
     while True:
-        if number_char_in_word(name, " ") == 1:
-            break
-        else:
+        if number_char_in_word(name, " ") > 1 or name[0] == " " or name[-1] == " ":
             print(f"It seems '{name}' doesn't only have your first and last name in it. Please try again. ")
             name = input("What is your name? Enter your first and last name. ")
+            
+        else:
+            break
+            
 
     last_name = name.split(' ')[1]
 
@@ -178,15 +183,18 @@ def get_middle_name(name):
         Returns:
         - middle_name: the middle name of the inputted name
     """
-
     while True:
-        if number_char_in_word(name, " ") < 2:
+        if number_char_in_word(name, " ") > 2 or name[0] == " " or name[-1] == " ":
             print(f"It seems '{name}' doesn't only have your first name, middle name(s), and last name in it. Please try again. ")
             name = input("What is your name? Enter your first and last name. ")
         else:
             break
 
     middle_name = name.split(' ')[1].split(' ')[0]          #this splits name, taking the first index of the split. Then, it takes the zero-th index after splitting that earlier value
+
+    if middle_name == "":                                   #fixes the bug where the user enters a character, then double space in the middle, then another character
+        print(f"'{name}' has a double space in the middle. Please try again:  ")
+        middle_name = get_middle_name(input('What is your name? Enter your first, middle, and last name. '))        #this is a recursive call, to enable the user to try again
 
     return middle_name
 
