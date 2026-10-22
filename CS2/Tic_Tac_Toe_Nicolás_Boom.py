@@ -64,40 +64,64 @@ def get_player_details(playing_computer):
     else:
         player2_details.append("x")
 
+    if playing_computer:
+        player2_details.append("Comp.")
+
     return player1_details, player2_details
 
 def get_player_move(board, player_details):
+    available_move = False
 
     while True:
-        move = input(f"{player_details[0]}, where do you want to move? ")
+        if len(player_details) == 3:
+            move = get_computer_move(board)
+            loading_screen(5, 3, "Computer is thinking")
+        else:
+            move = input(f"{player_details[0]}, where do you want to move? ")
 
         if move not in list("123456789"):
             print("Please enter a valid space, as a number between 1 and 9. Try again below: ")
             continue
 
+        
         for row in board:
-            i = 0
+            for character in row:
+                if character == move:
+                    available_move = True
+        
+                if not available_move:
+                    continue
+
+
+        original_board = board
+        row_counter = 0
+
+        for row in board:
+            space_counter = 0
+
             for space in row:
                 if space == move:
-                    if row[i] == move:
-                        row[i] = player_details[1].upper()
-                    else:
-                        print("Invalid move. Please try again below: ")
-                        continue
-                i += 1
+                    board[row_counter][space_counter] = player_details[1].upper()
+
+                space_counter += 1
+
+            row_counter += 1
 
         return board
 
 def get_computer_move(board):
+    available_move = False
+    
     while True:
         computer_move = random.choice(list("123456789"))
 
         for row in board:
-            if row.index(computer_move) == 'X' or row.index(computer_move) == "O":
-                continue
+            for character in row:
+                if character == computer_move:
+                    available_move = True
 
-        break
-
+        if available_move:
+            return computer_move
 
 
 def check_winner(board, player_details):
@@ -108,24 +132,24 @@ def check_winner(board, player_details):
     else:
         return False
 
-def loading_screen():
+def loading_screen(iterations, length, message):
     print("\033[H\033[J", end="")                     # \033[H moves the cursor to the top-left corner of the screen. \033[J clears the screen from the cursor to the end of the window. end="" prevents Python from printing a trailing blank newline.
     
     dot = "."
     counter = 0
 
-    while counter <= 3:
+    while counter <= iterations:
         dots = ""
-        for i in range(5):
+        for i in range(length):
             print("\033[H\033[J", end="")                   # \033[H moves the cursor to the top-left corner of the screen. \033[J clears the screen from the cursor to the end of the window. end="" prevents Python from printing a trailing blank newline.
             dots = dots + dot
-            print("Picking a which player starts" + dots)
+            print(f"{message}" + dots)
             time.sleep(0.15)
 
         counter += 1
 
 def get_current_player():
-    loading_screen()
+    loading_screen(3, 5, "Deciding who is going first")
     return random.choice([0, 1])
 
 def get_playing_computer():
@@ -149,10 +173,9 @@ def main():
     playing_computer = get_playing_computer()
 
     if playing_computer:
-        player1_details, computer_details = get_player_details(playing_computer)
+        player1_details, player2_details = get_player_details(playing_computer)
     else:
         player1_details, player2_details = get_player_details(playing_computer)
-
 
     moves = 0
 
@@ -175,8 +198,8 @@ def main():
 
             won = check_winner(board, player)
             if won:
-                print(f"Congradulations, {player[0]}, you won! ")
-                break
+                print(f"{player[0]} won! ")
+                exit()
 
             moves += 1
             if moves == 9:
