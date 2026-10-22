@@ -5,7 +5,9 @@ Bugs: None known
 Date: 10/22/2026
 Bonuses: Can play against computer, can play again, 
     10/19/2026: Base code uploaded, no bonuses, many bugs
-    10/22/2026: Bug fixes, can now play against the computer
+    10/22/2026 9:10: Bug fixes, can now play against the computer
+    10/22/2026 10:20: Added documentaion, now has play again function
+
 
 """
 
@@ -281,8 +283,8 @@ def play_again():
             return False
         else:
             print("Invalid response. Please try again below: ")
-      
-            
+
+
 def main():
     board = [["1", "2", "3"],
              ["4", "5", "6"],
