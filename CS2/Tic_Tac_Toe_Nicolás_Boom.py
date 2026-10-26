@@ -7,6 +7,7 @@ Bonuses: Can play against computer, can play again,
     10/19/2026: Base code uploaded, no bonuses, many bugs
     10/22/2026 9:10: Bug fixes, can now play against the computer
     10/22/2026 10:20: Added documentaion, now has play again function
+    10/22/2026 9:15: Added respective colors to "X" and "O" moves, loading screen added to winner and tie functions
 
 
 """
@@ -29,14 +30,41 @@ def display_board(board):
 
     printable_board = ""
 
-    for row in board:
-        row.append("\n")
-        printable_board = printable_board + " | ".join(row) + "----------\n"
+    red = '\033[31m'
+    blue = '\033[34m'               #for colored text
+    reset = '\033[0m'
+
+    
+    i = 0
+    for row in board:               #adds the colors to the "X"'s and "O"'s
+        for character in row:
+            if character == "X":
+                board[int(i / 3)][i % 3] = f"{red}X{reset}"
+            elif character == "O":
+                board[int(i / 3)][i % 3] = f"{blue}O{reset}"
+            i += 1
+    
+
+
+    for i in range(len(board)):
+        board[i].append("\n")
+        printable_board = printable_board + " | ".join(board[i]) + "----------\n"
         
     print(printable_board)
 
-    for row in board:
+    for row in board:               #removes the "\n"'s from each row in the board
         row.pop(3)
+
+    i = 0
+    for row in board:               #removes the colors from the letters, after having printed with the colors
+        for character in row:
+            if "X" in character:
+                board[int(i / 3)][i % 3] = "X"
+            elif "O" in character:
+                board[int(i / 3)][i % 3] = "O"
+            i += 1
+
+
 
 def get_player_details(playing_computer):
     """
@@ -117,7 +145,7 @@ def get_player_move(board, player_details):
             move = input(f"{player_details[0]}, where do you want to move? ")
 
         if move not in list("123456789"):
-            print("Please enter a valid space, as a number between 1 and 9. Try again below: ")
+            print("Please enter a valid move, as a number between 1 and 9. Try again below: ")
             continue
 
         
@@ -261,25 +289,25 @@ def get_playing_computer():
             print("Invalid Response, please try again below: ")
             continue
 
-def play_again():
+def yes_or_no_question(question):
     """
     Description: Asks the user if they want to play again
     Uses a while loop and returns no error.
 
     Parameters:
-    - None
+    - question: the question the function asks to get a yes or no answer
 
     Returns:
-    - True: a boolean, returned if the user wants to play again
-    - False: a boolean, returned if the user does not want to play again
+    - True: a boolean, returned if the user says yes
+    - False: a boolean, returned if the user says no
     """
     
     while True:
-        choice = input("Do you want to play again? Enter either 'y' or 'n'. ").lower()
+        choice = input(f"{question} " + "Enter either 'yes' or 'no'. ").lower()
 
-        if choice == 'y':
+        if choice == 'yes':
             return True
-        elif choice == 'n':
+        elif choice == 'no':
             return False
         else:
             print("Invalid response. Please try again below: ")
@@ -313,22 +341,29 @@ def main():
                 continue
 
             display_board(board)
+
+            if moves == 9:
+                loading_screen(3, 3, "")
+                print("You tied. ")
+
+                if yes_or_no_question("Do you want to play again?"):
+                    main()
+                else:
+                    exit()
+
             board = get_player_move(board, player)
             print("\033[H\033[J", end="")               # \033[H moves the cursor to the top-left corner of the screen. \033[J clears the screen from the cursor to the end of the window. end="" prevents Python from printing a trailing blank newline.
 
             won = check_winner(board, player)
             if won:
+                loading_screen(3, 3, "")
                 print(f"{player[0]} won! ")
 
-                if play_again():
+                if yes_or_no_question("Do you want to play again?"):
                     main()
+                else:
+                    exit()
 
             moves += 1
-            if moves == 9:
-                print("You tied. ")
-
-                if play_again():
-                    main()
-
 
 main()
