@@ -7,8 +7,8 @@ Bonuses: Can play against computer, can play again,
     10/19/2026: Base code uploaded, no bonuses, many bugs
     10/22/2026 9:10: Bug fixes, can now play against the computer
     10/22/2026 10:20: Added documentaion, now has play again function
-    10/22/2026 9:15: Added respective colors to "X" and "O" moves, loading screen added to winner and tie functions
-
+    10/22/2026 9:21: Added respective colors to "X" and "O" moves, loading screen added to winner and tie functions
+    10/29/2026 2:05: Found and fixed bugs in ability to play same move twice
 
 """
 
@@ -63,8 +63,6 @@ def display_board(board):
             elif "O" in character:
                 board[int(i / 3)][i % 3] = "O"
             i += 1
-
-
 
 def get_player_details(playing_computer):
     """
@@ -122,7 +120,7 @@ def get_player_details(playing_computer):
 
     return player1_details, player2_details
 
-def get_player_move(board, player_details):
+def get_player_move(board, player_details, available_move_numbers):
     """
     Description: Asks the players for thier moves, taking a computer move if there is no player 2, and applying them to the board
     Uses a whil loop and two for loops, and returns no error.
@@ -144,7 +142,7 @@ def get_player_move(board, player_details):
         else:
             move = input(f"{player_details[0]}, where do you want to move? ")
 
-        if move not in list("123456789"):
+        if move not in available_move_numbers:
             print("Please enter a valid move, as a number between 1 and 9. Try again below: ")
             continue
 
@@ -172,7 +170,9 @@ def get_player_move(board, player_details):
 
             row_counter += 1
 
-        return board
+        available_move_numbers.remove(move)
+
+        return board, available_move_numbers
 
 def get_computer_move(board):
     """
@@ -234,6 +234,7 @@ def loading_screen(iterations, length, message):
     - None
     """
 
+    
     print("\033[H\033[J", end="")                     # \033[H moves the cursor to the top-left corner of the screen. \033[J clears the screen from the cursor to the end of the window. end="" prevents Python from printing a trailing blank newline.
     
     dot = "."
@@ -317,6 +318,7 @@ def main():
     board = [["1", "2", "3"],
              ["4", "5", "6"],
              ["7", "8", "9"]]
+    available_moves = list("123456789")
 
     playing_computer = get_playing_computer()
 
@@ -342,27 +344,29 @@ def main():
 
             display_board(board)
 
-            if moves == 9:
-                loading_screen(3, 3, "")
-                print("You tied. ")
-
-                if yes_or_no_question("Do you want to play again?"):
-                    main()
-                else:
-                    exit()
-
-            board = get_player_move(board, player)
-            print("\033[H\033[J", end="")               # \033[H moves the cursor to the top-left corner of the screen. \033[J clears the screen from the cursor to the end of the window. end="" prevents Python from printing a trailing blank newline.
-
+            board, available_moves = get_player_move(board, player, available_moves)
             won = check_winner(board, player)
             if won:
                 loading_screen(3, 3, "")
                 print(f"{player[0]} won! ")
+                display_board(board)
 
                 if yes_or_no_question("Do you want to play again?"):
                     main()
                 else:
                     exit()
+
+            if moves == 8:
+                loading_screen(3, 3, "")
+                print("You tied. ")
+                display_board(board)
+
+                if yes_or_no_question("Do you want to play again?"):
+                    main()
+                else:
+                    exit()
+
+            print("\033[H\033[J", end="")               # \033[H moves the cursor to the top-left corner of the screen. \033[J clears the screen from the cursor to the end of the window. end="" prevents Python from printing a trailing blank newline.
 
             moves += 1
 
