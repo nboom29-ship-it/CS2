@@ -10,6 +10,7 @@ Log: Initial version: 9/10/2026
                 Get_initials, Find_title, and Find_factors functions were included and updated
     9/29/2026 8:49: Added documentation to all functions, as well as supplementary documentation using hashtags to specific lines. Changed name of file from What_Is_In_A_Name.py to Whats_In_A_Name_Nicolas_Boom
     10/1/2026 10:55: Fixed bugs in firstname and lastname functions
+    11/9/2026 11:41: Fixed bugs in firstname and lastname functions, added edge case of non-alphabetical letters in names of firstname and lastname functions
 
 """
 
@@ -132,10 +133,24 @@ def get_firstname(name):
         Returns:
         - first_name: the first name of the inputted name
     """
+
+    non_available_characters = list("`1234567890-=~!@#$%^&*()_+[]|;':,./<>?")
+    
     
     while True:
-        if number_char_in_word(name, " ") > 1 or name[0] == " " or name[-1] == " ":
-            print(f"It seems '{name}' doesn't only have your first and last name in it. Please try again. ")
+        not_real_name = False
+        for character in list(name):
+            if character in non_available_characters:
+                print("Make your name real. Try again below: ")
+                name = input("What is your name? Enter your first and last name. ")
+                not_real_name = True
+                break
+
+        if not_real_name:
+            continue
+
+        if " " not in name or number_char_in_word(name, " ") > 1 or name[0] == " " or name[-1] == " ":
+            print(f"It seems '{name}' doesn't only have your first and last name in it. Please try again below: ")
             name = input("What is your name? Enter your first and last name. ")
             
         else:
@@ -158,10 +173,22 @@ def get_lastname(name):
         - last_name: the last name of the inputted name
     """
 
-    
+    non_available_characters = list("`1234567890-=~!@#$%^&*()_+[]\{}|;':,./<>?")
+        
     while True:
-        if number_char_in_word(name, " ") > 1 or name[0] == " " or name[-1] == " ":
-            print(f"It seems '{name}' doesn't only have your first and last name in it. Please try again. ")
+        not_real_name = False
+        for character in list(name):
+            if character in non_available_characters:
+                print("Make your name real. Try again below: ")
+                name = input("What is your name? Enter your first and last name. ")
+                not_real_name = True
+                break
+
+        if not_real_name:
+            continue
+
+        if " " not in name or number_char_in_word(name, " ") > 1 or name[0] == " " or name[-1] == " ":
+            print(f"It seems '{name}' doesn't only have your first and last name in it. Please try again below: ")
             name = input("What is your name? Enter your first and last name. ")
             
         else:
@@ -510,11 +537,11 @@ Enter here: """)
             for letter in list("bcdfghjklmnpqrstvwxyz"):
                 print(f"There are {consonants_dict.get(letter)} {letter}'s in your word. ")
 
-            print(f"Your first name is: {get_firstname(input('What is your name? Enter your first and last name. '))}")
+            print(f"Your first name is: {get_firstname(input('get_firstname: What is your name? Enter your first and last name. '))}")
 
-            print(f"Your lastname is: {get_lastname(input('What is your name? Enter your first and last name. '))}")
+            print(f"Your lastname is: {get_lastname(input('get_lastname: What is your name? Enter your first and last name. '))}")
 
-            print(f"Your middle name is: {get_middle_name(input('What is your name? Enter your first, middle, and last name. '))}")
+            print(f"Your middle name is: {get_middle_name(input('get_middle_name: What is your name? Enter your first, middle, and last name. '))}")
 
             hyphen_in, last_name = find_hyphen_in_lastname()
             if hyphen_in:
@@ -534,7 +561,7 @@ Enter here: """)
             else:
                 print("Your first name is not a palindrome. ")
 
-            print(f"Your name as an array is: {make_array(input('What is your name? '))}")
+            print(f"Your name as an array is: {make_array(input('make_array: What is your name? '))}")
 
             print(f"Your initials are: {get_initials()}")
 
